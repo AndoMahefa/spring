@@ -1,9 +1,9 @@
 package models;
 
-import etu1896.annotation.*;
+import etu1896.annotation.Anno_Url;
 
 public class Dept {
-    @Url(url = "all-dept")
+    @Anno_Url(url = "all-dept")
     public void find_all_dept() {
 
     }
