@@ -7,6 +7,6 @@
     <title>Document</title>
 </head>
 <body>
-    <a href="ball?qq=ww">cccc</a>
+    <h1>Welcome to dept-findall</h1>
 </body>
 </html>
