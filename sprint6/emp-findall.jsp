@@ -1,3 +1,6 @@
+<%@page import="etu1896.framework.servlet.*"%>
+<%@page import="java.util.*"%>
+<% ArrayList<String> emp = (ArrayList<String>) request.getAttribute("list-emp"); %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,5 +11,11 @@
 </head>
 <body>
     <h1>Welcome to emp-findall</h1>
+    <h3>Tous les employes</h3>
+    <%
+        for(int i=0; i<emp.size(); i++) {
+            out.println(emp.get(i));
+        }
+    %>
 </body>
 </html>
