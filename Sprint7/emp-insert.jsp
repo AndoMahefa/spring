@@ -8,5 +8,12 @@
 </head>
 <body>
     <h1>Welcome to emp-insert</h1>
+    <form action="save">
+        <input type="text" name="nom">
+        <input type="text" name="prenom">
+        <input type="text" name="age">
+        <input type="text" name="salaire">
+        <input type="submit" value="valider">
+    </form>
 </body>
 </html>
