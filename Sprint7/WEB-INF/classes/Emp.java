@@ -7,7 +7,34 @@ import etu1896.framework.ModelView;
 
 public class Emp {
     String nom;
-     
+    String prenom;
+    Integer age;
+    Double salaire;
+
+    public Double getSalaire() {
+        return salaire;
+    }
+
+    public void setSalaire(Double salaire) {
+        this.salaire = salaire;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public String getPrenom() {
+        return prenom;
+    }
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
+
     public String getNom() {
         return nom;
     }
@@ -36,5 +63,10 @@ public class Emp {
 
     public void test(){
         
+    }
+
+    @Anno_Url(url = "/Emp/save")
+    public void save() {
+
     }
 }
