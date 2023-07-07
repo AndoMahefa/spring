@@ -53,28 +53,45 @@ public class FrontServlet extends HttpServlet {
                         for (int i = 0; i < params.size(); i++) {
                             paramsValue.add(req.getParameter(params.get(i)));
                         }
-                        ModelView view = ModelView.loadView(apres_contexte, this.mapping_url, paramsValue);
-                        boolean save = false;
-                        try {
-                            save = Utilitaire.isSave(req, mapping_url);
-                        } catch (Exception e) {
-                            // TODO: handle exception
+                        int condition = Utilitaire.countFields(req, ob);
+                        if(params.size() != 0) {
+                            condition = 0;
                         }
-                        if(save == true) {
-                            Object data_form = Utilitaire.save(req, mapping_url);
-                            view.setData(new HashMap<String, Object>());
-                            view.addItem("data-form", data_form);
-                            req.setAttribute("data-form", view.getData());
+                        out.println("condition: " + condition);
+                        ModelView view = ModelView.loadView(apres_contexte, this.mapping_url, paramsValue);
+                        
+                        String className = Utilitaire.classToSave(mapping_url, apres_contexte);
+                        out.println("className: " + className);
+                        out.println(this.objects.get(className).getClass().getSimpleName());
+                        if(condition != 0) {
+                            if (this.objects.get(className) != null) {
+                                Utilitaire.resetSet(this.objects.get(className));
+                                Utilitaire.save(req, mapping_url, this.objects.get(className));
+                                view.addItem("data-form", this.objects.get(className));
+                                req.setAttribute("data-form", view.getData());
+                                System.out.println("singletons = " + this.objects.get(className));
+                            } else {
+                                Object data_form = Utilitaire.save(req, mapping_url, apres_contexte);
+                                view.setData(new HashMap<String, Object>());
+                                view.addItem("data-form", data_form);
+                                req.setAttribute("data-form", view.getData());
+                            }
+
                             RequestDispatcher dispatcher = req.getRequestDispatcher(view.getView());  
-                            dispatcher.forward(req, res);        
+                            dispatcher.forward(req, res);
                         } else {
                             ArrayList<String> keys =  new ArrayList<String>(view.getData().keySet());
                             for(int i=0; i<keys.size(); i++) {
                                 req.setAttribute(keys.get(i), view.getData().get(keys.get(i)));
                             }
+                            out.println(view.getView());
+                            out.println(view.getData().size());
                             RequestDispatcher dispatcher = req.getRequestDispatcher(view.getView());  
                             dispatcher.forward(req, res);                            
                         }
+                            
+                        
+                        
                     } 
                 }        
             }                

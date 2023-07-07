@@ -88,6 +88,7 @@ public class Emp {
         employes.add(b);
         employes.add(c);
         view.addItem("list-emp",employes);
+        view.addSessions("Profile", "Admin");
 
         return view;
     }

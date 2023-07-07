@@ -236,44 +236,24 @@ public class Utilitaire{
         return reponse;
     }
     ////manisa anle field avy nalaina
-    public static int countRequestFields(HttpServletRequest request, String className) throws Exception {
-        int reponse = 0;
-        Vector<String> fields = Utilitaire.fields(className);
-        for (String field: fields) {
-            System.out.println(field);
-            if (request.getPart(field) != null) {
-                reponse++;
+    
+    public static int countFields(HttpServletRequest request, Object object) {
+        int count = 0;
+        String[] fields = new Utilitaire().getAttribute(object);
+        for(String field : fields) {
+            if(request.getParameter(field) != null) {
+                count++;
             }
         }
-    
-        return reponse;
-    }
 
-    public static boolean isSave(HttpServletRequest request, HashMap<String, Mapping> mappingUrls) throws Exception {
-        Set<String> keys = mappingUrls.keySet();
-        for (String key : keys) {
-          String className = mappingUrls.get(key).getClassName();
-          if (Utilitaire.countRequestFields(request, className) == Utilitaire.fields(className).size()) {
-            return true;
-          }
-        }
-        return false;
+        return count;
     }
 
       ////maka ny anaranle classe ho savena
-    public static String classToSave(HttpServletRequest request, HashMap<String, Mapping> mappingUrls) throws Exception {
-        String reponse = "";
-        Set<String> keys = mappingUrls.keySet();
-        for (String key : keys) {
-            String className = mappingUrls.get(key).getClassName();
-            System.out.println("class: "+className);
-            System.out.println(Utilitaire.countRequestFields(request, className));
-            System.out.println(Utilitaire.fields(className).size());            
-            if (Utilitaire.countRequestFields(request, className) == Utilitaire.fields(className).size()) {
-                return className;
-            }
-        }
-        return reponse;
+    public static String classToSave(HashMap<String, Mapping> mappingUrls, String url) throws Exception {
+        String className = mappingUrls.get(url).getClassName();
+
+        return className;
     }
     
     public static void uploadFile(Object reponse, HttpServletRequest request, String parameter, Field field) throws Exception {
@@ -332,8 +312,8 @@ public class Utilitaire{
     }
 
     /////misave anle fichier
-    public static Object save(HttpServletRequest request, HashMap<String, Mapping> mappingUrls) throws Exception {
-        String className = Utilitaire.classToSave(request, mappingUrls);
+    public static Object save(HttpServletRequest request, HashMap<String, Mapping> mappingUrls, String url) throws Exception {
+        String className = Utilitaire.classToSave(mappingUrls, url);
         System.out.println("name of classes: " + className);
         Vector<String> parameters = Utilitaire.fields(className);
         Class<?> clazz = Class.forName(className);
@@ -343,6 +323,11 @@ public class Utilitaire{
         Utilitaire.runObject(reponse, request, parameters);   
     
         return reponse;
+    }
+
+    public static void save(HttpServletRequest request, HashMap<String, Mapping> mappingUrls, Object object) throws Exception {
+        Vector<String> parameters = Utilitaire.fields(object.getClass().getName());
+        Utilitaire.runObject(object, request, parameters);
     }
     //Upload file
 
@@ -356,17 +341,25 @@ public class Utilitaire{
     }
     //reset setters
 
-    // public static void main(String[] args){
-    //     // try {
-    //     //     String path = "D:\\Logiciel\\Tomcat\\webapps\\Sprint8\\WEB-INF\\classes";
-    //     //     HashMap<String, Mapping> mappingUrls = Utilitaire.getHashMap(path);
+    public static Method getMethodUrl(String url, HashMap<String, Mapping> mappingUrls) throws Exception{
+        Method method = null;
+        String className = mappingUrls.get(url).getClassName();
+        String methodName = mappingUrls.get(url).getMethod();
+        Class<?> classe = Class.forName(className);
+        for (Method meth: classe.getDeclaredMethods()) {
+            if (meth.getName().equals(methodName)) {
+                method = meth;
+            }
+        }
 
-    //     //     Vector<String> parameters = Utilitaire.paramsAnnotation(mappingUrls, "/Emp/id");
-    //     //     System.out.println(parameters.size());
-    
-    //     // } catch (Exception e) {
-    //     //     // TODO: handle exception
-    //     //     System.out.println(e);
-    //     // }    
-    // }
+        return  method;
+    }
+
+    public static boolean checkAuth(Method method) throws Exception {
+        if (method.isAnnotationPresent(Auth.class) == true) {
+            return true;
+        }
+
+        return false;
+    }
 }
